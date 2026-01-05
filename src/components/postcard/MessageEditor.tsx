@@ -39,7 +39,7 @@ export function MessageEditor({ isOpen, onClose, message, fontStyle, onSave }: M
             <X className="w-6 h-6" />
           </button>
           <h2 className="text-lg font-medium uppercase tracking-wider">Mensaje</h2>
-          <Button onClick={handleSave} variant="ghost" className="text-primary font-medium">
+          <Button onClick={handleSave} variant="postcard-primary" size="sm" className="active:scale-95 transition-transform">
             Guardar
           </Button>
         </div>
