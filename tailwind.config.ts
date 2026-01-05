@@ -64,6 +64,15 @@ export default {
       fontFamily: {
         display: ["Playfair Display", "Georgia", "serif"],
         body: ["Inter", "system-ui", "sans-serif"],
+        // Caligráficas
+        caveat: ["Caveat", "cursive"],
+        dancing: ["Dancing Script", "cursive"],
+        vibes: ["Great Vibes", "cursive"],
+        // Clásicas/Serif
+        lora: ["Lora", "serif"],
+        merriweather: ["Merriweather", "serif"],
+        // Monospace
+        mono: ["Roboto Mono", "monospace"],
       },
       boxShadow: {
         card: "var(--shadow-card)",

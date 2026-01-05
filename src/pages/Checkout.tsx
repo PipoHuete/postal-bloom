@@ -9,9 +9,12 @@ import { CreditCard, MapPin, Mail, Send, TestTube, Loader2, Stamp } from 'lucide
 import { supabase } from '@/integrations/supabase/client';
 
 const FONT_CLASS_MAP: Record<FontStyle, string> = {
-  courier: 'font-courier',
-  bradley: 'font-bradley',
-  snell: 'font-snell',
+  caveat: 'font-caveat',
+  dancing: 'font-dancing',
+  vibes: 'font-vibes',
+  lora: 'font-lora',
+  merriweather: 'font-merriweather',
+  mono: 'font-mono',
 };
 
 export default function Checkout() {
@@ -20,7 +23,7 @@ export default function Checkout() {
   const [isSendingTest, setIsSendingTest] = useState(false);
   
   const filterOption = FILTERS.find(f => f.id === (postcard.image?.filter || 'none'));
-  const fontClass = FONT_CLASS_MAP[postcard.fontStyle] || 'font-courier';
+  const fontClass = FONT_CLASS_MAP[postcard.fontStyle] || 'font-caveat';
 
   const handlePay = () => {
     // Stripe integration will go here

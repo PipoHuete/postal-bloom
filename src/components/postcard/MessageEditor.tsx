@@ -12,9 +12,15 @@ interface MessageEditorProps {
 }
 
 const FONT_OPTIONS: { id: FontStyle; name: string; className: string }[] = [
-  { id: 'courier', name: 'Courier', className: 'font-courier' },
-  { id: 'bradley', name: 'Bradley Hand', className: 'font-bradley' },
-  { id: 'snell', name: 'Snell Roundhand', className: 'font-snell' },
+  // Caligráficas
+  { id: 'caveat', name: 'Caveat', className: 'font-caveat' },
+  { id: 'dancing', name: 'Dancing Script', className: 'font-dancing' },
+  { id: 'vibes', name: 'Great Vibes', className: 'font-vibes' },
+  // Clásicas
+  { id: 'lora', name: 'Lora', className: 'font-lora' },
+  { id: 'merriweather', name: 'Merriweather', className: 'font-merriweather' },
+  // Monospace
+  { id: 'mono', name: 'Roboto Mono', className: 'font-mono' },
 ];
 
 export function MessageEditor({ isOpen, onClose, message, fontStyle, onSave }: MessageEditorProps) {
@@ -28,7 +34,7 @@ export function MessageEditor({ isOpen, onClose, message, fontStyle, onSave }: M
     onClose();
   };
 
-  const selectedFontClass = FONT_OPTIONS.find(f => f.id === localFont)?.className || 'font-courier';
+  const selectedFontClass = FONT_OPTIONS.find(f => f.id === localFont)?.className || 'font-caveat';
 
   return (
     <div className="fixed inset-0 z-50 bg-background animate-fade-in">
@@ -58,19 +64,19 @@ export function MessageEditor({ isOpen, onClose, message, fontStyle, onSave }: M
         {/* Font Selector */}
         <div className="border-t p-4">
           <p className="text-sm text-muted-foreground mb-3 uppercase tracking-wider">Tipografía</p>
-          <div className="flex gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {FONT_OPTIONS.map((font) => (
               <button
                 key={font.id}
                 onClick={() => setLocalFont(font.id)}
-                className={`flex-1 py-4 px-3 rounded-lg border-2 transition-all ${
+                className={`py-3 px-2 rounded-lg border-2 transition-all ${
                   localFont === font.id
                     ? 'border-primary bg-primary/5'
                     : 'border-border hover:border-muted-foreground'
                 }`}
               >
-                <span className={`text-lg ${font.className}`}>Aa</span>
-                <p className="text-xs text-muted-foreground mt-1">{font.name}</p>
+                <span className={`text-xl ${font.className}`}>Aa</span>
+                <p className="text-[10px] text-muted-foreground mt-1 truncate">{font.name}</p>
               </button>
             ))}
           </div>

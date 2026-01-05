@@ -14,7 +14,7 @@ export type ImageFilter =
   | 'cool' 
   | 'contrast';
 
-export type FontStyle = 'courier' | 'bradley' | 'snell';
+export type FontStyle = 'caveat' | 'dancing' | 'vibes' | 'lora' | 'merriweather' | 'mono';
 
 export interface Contact {
   id: string;
