@@ -16,7 +16,7 @@ export function PostcardFront() {
         {postcard.image ? (
           <img
             src={postcard.image.url}
-            alt="Tu postal"
+            alt={`Vista previa de tu postal personalizada${filterOption ? ` con filtro ${filterOption.name}` : ''}`}
             className="w-full h-full object-cover transition-all duration-500"
             style={{ filter: filterOption?.cssFilter || 'none' }}
           />

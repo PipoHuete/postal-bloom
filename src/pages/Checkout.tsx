@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Header } from '@/components/layout/Header';
@@ -97,9 +98,42 @@ export default function Checkout() {
     }
   };
 
+  // JSON-LD Product Schema for SEO/GEO
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Custom Postcard - Postal Personalizada",
+    "description": "Postal física personalizada con tu foto y mensaje. Impresión premium en papel vintage de alta calidad.",
+    "image": postcard.image?.url || "",
+    "brand": {
+      "@type": "Brand",
+      "name": "SelfiePostal"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "2.68",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+      "priceValidUntil": "2026-12-31",
+      "seller": {
+        "@type": "Organization",
+        "name": "SelfiePostal"
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen pb-8">
-      <Header title="Carrito" showBack />
+    <>
+      <Helmet>
+        <title>Tu Carrito - SelfiePostal</title>
+        <meta name="description" content="Revisa tu postal personalizada antes de enviarla. Impresión premium y envío en 24-48h laborables." />
+        <link rel="canonical" href="/checkout" />
+        <script type="application/ld+json">
+          {JSON.stringify(productSchema)}
+        </script>
+      </Helmet>
+      <div className="min-h-screen pb-8">
+        <Header title="Carrito" showBack />
       
       <main className="container px-4 py-6 max-w-lg mx-auto">
         {/* Postcard Previews */}
@@ -116,7 +150,7 @@ export default function Checkout() {
               {postcard.image && (
                 <img
                   src={postcard.image.url}
-                  alt="Anverso de tu postal"
+                  alt={`Vista previa del anverso de tu postal personalizada${filterOption ? ` con filtro ${filterOption.name}` : ''}`}
                   className="w-full h-full object-cover"
                   style={{ filter: filterOption?.cssFilter || 'none' }}
                 />
@@ -239,6 +273,7 @@ export default function Checkout() {
           Tu postal será impresa y enviada en 24-48h laborables
         </p>
       </main>
-    </div>
+      </div>
+    </>
   );
 }
