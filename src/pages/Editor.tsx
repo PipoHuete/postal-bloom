@@ -82,7 +82,7 @@ export default function Editor() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen pb-24">
       <Header title="Editar Postal" showBack />
       
       <main className="container px-4 py-6 max-w-lg mx-auto">

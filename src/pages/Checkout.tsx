@@ -98,7 +98,7 @@ export default function Checkout() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-8">
+    <div className="min-h-screen pb-8">
       <Header title="Carrito" showBack />
       
       <main className="container px-4 py-6 max-w-lg mx-auto">

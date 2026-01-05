@@ -69,7 +69,7 @@ export default function Gallery() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen pb-24">
       <Header title="Nueva Postal" showClose />
       
       <main className="container px-4 py-6 max-w-lg mx-auto">
