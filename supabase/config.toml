@@ -1,1 +1,4 @@
 project_id = "qlykezevbhpqyhpjywxk"
+
+[functions.send-test-postcard]
+verify_jwt = false
