@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Send, Heart, Sparkles, Palette, PenLine, Mail, Stamp } from 'lucide-react';
-import portadaImage from '@/assets/portada.png';
+import portadaImage from '@/assets/portada_grande.webp';
 
 export default function Index() {
   const navigate = useNavigate();
