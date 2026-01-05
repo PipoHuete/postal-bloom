@@ -9,6 +9,7 @@ import Gallery from "./pages/Gallery";
 import Editor from "./pages/Editor";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import AdminPostals from "./pages/AdminPostals";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/editor" element={<Editor />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/admin-postals" element={<AdminPostals />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
