@@ -20,8 +20,9 @@ const FONT_CLASS_MAP: Record<FontStyle, string> = {
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { postcard } = usePostcard();
+  const { postcard, resetPostcard } = usePostcard();
   const [isSendingTest, setIsSendingTest] = useState(false);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   
   const filterOption = FILTERS.find(f => f.id === (postcard.image?.filter || 'none'));
@@ -53,16 +54,61 @@ export default function Checkout() {
     );
   }
 
-  const handlePay = () => {
-    // Stripe integration will go here
-    toast.info('Integración con Stripe pendiente - Precio: 2,68€');
+  const handlePlaceOrder = async () => {
+    setIsPlacingOrder(true);
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user?.email) {
+        toast.error('No se pudo obtener tu email. Inicia sesión de nuevo.');
+        return;
+      }
+
+      // Validate required fields
+      if (!postcard.recipientName || !postcard.addressLine1 || !postcard.postalCode || !postcard.city) {
+        toast.error('Faltan datos del destinatario. Vuelve al editor.');
+        return;
+      }
+
+      // Create order in database
+      const { data: order, error } = await supabase
+        .from('orders')
+        .insert({
+          user_id: user.id,
+          email: user.email,
+          recipient_name: postcard.recipientName,
+          recipient_address: postcard.addressLine1 + (postcard.addressLine2 ? `, ${postcard.addressLine2}` : ''),
+          recipient_postal_code: postcard.postalCode,
+          recipient_city: postcard.city,
+          image_url: postcard.image?.url || null,
+          image_filter: postcard.image?.filter || 'none',
+          message: postcard.message || '',
+          font_style: postcard.fontStyle,
+          price_cents: 268,
+          status: 'pendiente',
+        })
+        .select('id')
+        .single();
+
+      if (error) throw error;
+
+      // Reset postcard and navigate to success
+      resetPostcard();
+      navigate(`/order-success?order=${order.id}`);
+      
+    } catch (error: any) {
+      console.error('Error placing order:', error);
+      toast.error('Error al crear el pedido. Inténtalo de nuevo.');
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   const handleSendTest = async () => {
     setIsSendingTest(true);
     
     try {
-      // Obtener el email del usuario autenticado
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user?.email) {
@@ -72,7 +118,7 @@ export default function Checkout() {
 
       const { data, error } = await supabase.functions.invoke('send-test-postcard', {
         body: {
-          recipientEmail: user.email, // Usar el email del usuario autenticado
+          recipientEmail: user.email,
           postcardData: {
             imageUrl: postcard.image?.url || '',
             imageFilter: filterOption?.cssFilter || 'none',
@@ -258,15 +304,25 @@ export default function Checkout() {
           {isSendingTest ? 'Enviando...' : 'Enviar Prueba por Mail'}
         </Button>
 
-        {/* Pay Button */}
+        {/* Order Button */}
         <Button
           variant="postcard-nav"
           size="xl"
           className="w-full"
-          onClick={handlePay}
+          onClick={handlePlaceOrder}
+          disabled={isPlacingOrder}
         >
-          <Send className="w-5 h-5 mr-2" />
-          Pagar y Enviar Postal
+          {isPlacingOrder ? (
+            <>
+              <Stamp className="w-5 h-5 mr-2 animate-bounce" />
+              Procesando...
+            </>
+          ) : (
+            <>
+              <Send className="w-5 h-5 mr-2" />
+              Confirmar Pedido - 2,68€
+            </>
+          )}
         </Button>
 
         <p className="text-xs text-muted-foreground text-center mt-4">
