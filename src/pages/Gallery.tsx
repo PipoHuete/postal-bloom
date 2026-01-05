@@ -76,7 +76,7 @@ export default function Gallery() {
         {/* Action Buttons */}
         <div className="flex gap-3 mb-6">
           <Button
-            variant="postcard"
+            variant="postcard-primary"
             className="flex-1"
             onClick={handleCameraClick}
           >
@@ -84,7 +84,7 @@ export default function Gallery() {
             Cámara
           </Button>
           <Button
-            variant="postcard"
+            variant="postcard-primary"
             className="flex-1"
             onClick={() => fileInputRef.current?.click()}
           >
