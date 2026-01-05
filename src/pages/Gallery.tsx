@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { NavigationBar } from '@/components/layout/NavigationBar';
@@ -69,26 +70,35 @@ export default function Gallery() {
   };
 
   return (
-    <div className="min-h-screen pb-24">
-      <Header title="Nueva Postal" showClose />
+    <>
+      <Helmet>
+        <title>Selecciona tu Foto | Crear Postal Personalizada - SelfiePostal</title>
+        <meta name="description" content="Elige una foto de tu galería o haz una selfie para crear tu postal vintage personalizada. Sube tu imagen y aplica filtros retro únicos." />
+        <link rel="canonical" href="https://selfiepostal.com/gallery" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="min-h-screen pb-24">
+      <Header title="Selecciona Foto" showClose />
       
       <main className="container px-4 py-6 max-w-lg mx-auto">
         {/* Action Buttons */}
-        <div className="flex gap-3 mb-6">
+        <section className="flex gap-3 mb-6" aria-label="Opciones para añadir foto">
           <Button
             variant="postcard-primary"
             className="flex-1"
             onClick={handleCameraClick}
+            aria-label="Tomar foto con la cámara para postal personalizada"
           >
-            <Camera className="w-5 h-5 mr-2" />
+            <Camera className="w-5 h-5 mr-2" aria-hidden="true" />
             Cámara
           </Button>
           <Button
             variant="postcard-primary"
             className="flex-1"
             onClick={() => fileInputRef.current?.click()}
+            aria-label="Subir foto desde galería para postal vintage"
           >
-            <ImagePlus className="w-5 h-5 mr-2" />
+            <ImagePlus className="w-5 h-5 mr-2" aria-hidden="true" />
             Subir
           </Button>
           {/* Camera input - opens camera directly on mobile */}
@@ -99,6 +109,7 @@ export default function Gallery() {
             capture="user"
             onChange={handleFileUpload}
             className="hidden"
+            aria-hidden="true"
           />
           {/* File input - opens gallery */}
           <input
@@ -107,13 +118,14 @@ export default function Gallery() {
             accept="image/*"
             onChange={handleFileUpload}
             className="hidden"
+            aria-hidden="true"
           />
-        </div>
+        </section>
 
         {/* Section Title */}
         <div className="flex items-center gap-2 mb-4">
-          <Images className="w-5 h-5 text-primary" />
-          <h2 className="font-display text-lg font-semibold">Galería</h2>
+          <Images className="w-5 h-5 text-primary" aria-hidden="true" />
+          <h1 className="font-display text-lg font-semibold">Galería de Fotos para tu Postal</h1>
         </div>
 
         {/* Gallery Grid */}
@@ -131,5 +143,6 @@ export default function Gallery() {
         nextDisabled={!selectedId}
       />
     </div>
+    </>
   );
 }
