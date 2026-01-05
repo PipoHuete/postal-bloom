@@ -12,7 +12,7 @@ export default function Index() {
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         {/* Logo */}
-        <div className="mb-8 animate-fade-in w-full max-w-md">
+        <div className="mb-8 animate-fade-in w-full max-w-lg">
           <img 
             src={portadaImage} 
             alt="SelfiePostal - Envía postales personalizadas" 
