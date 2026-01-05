@@ -47,6 +47,60 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string
+          email: string
+          font_style: string | null
+          id: string
+          image_filter: string | null
+          image_url: string | null
+          message: string | null
+          price_cents: number
+          recipient_address: string
+          recipient_city: string
+          recipient_name: string
+          recipient_postal_code: string
+          status: Database["public"]["Enums"]["order_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          font_style?: string | null
+          id?: string
+          image_filter?: string | null
+          image_url?: string | null
+          message?: string | null
+          price_cents?: number
+          recipient_address: string
+          recipient_city: string
+          recipient_name: string
+          recipient_postal_code: string
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          font_style?: string | null
+          id?: string
+          image_filter?: string | null
+          image_url?: string | null
+          message?: string | null
+          price_cents?: number
+          recipient_address?: string
+          recipient_city?: string
+          recipient_name?: string
+          recipient_postal_code?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       postcards: {
         Row: {
           contact_id: string | null
@@ -103,6 +157,12 @@ export type Database = {
     }
     Enums: {
       font_style: "courier" | "bradley" | "snell"
+      order_status:
+        | "pendiente"
+        | "pagado"
+        | "enviado"
+        | "entregado"
+        | "cancelado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -231,6 +291,13 @@ export const Constants = {
   public: {
     Enums: {
       font_style: ["courier", "bradley", "snell"],
+      order_status: [
+        "pendiente",
+        "pagado",
+        "enviado",
+        "entregado",
+        "cancelado",
+      ],
     },
   },
 } as const
