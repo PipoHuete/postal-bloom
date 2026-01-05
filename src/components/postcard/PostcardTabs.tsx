@@ -6,32 +6,30 @@ interface PostcardTabsProps {
   onTabChange: (tab: 'anverso' | 'dorso') => void;
 }
 
+const TABS = [
+  { id: 'anverso' as const, label: 'ANVERSO' },
+  { id: 'dorso' as const, label: 'DORSO' },
+];
+
 export function PostcardTabs({ activeTab, onTabChange }: PostcardTabsProps) {
   return (
     <div className="flex w-full border-2 border-foreground rounded-lg overflow-hidden">
-      <button
-        onClick={() => onTabChange('anverso')}
-        className={cn(
-          'postcard-tab flex-1 transition-all duration-300',
-          activeTab === 'anverso' 
-            ? 'postcard-tab-active' 
-            : 'postcard-tab-inactive'
-        )}
-      >
-        ANVERSO
-      </button>
-      <div className="w-px bg-foreground" />
-      <button
-        onClick={() => onTabChange('dorso')}
-        className={cn(
-          'postcard-tab flex-1 transition-all duration-300',
-          activeTab === 'dorso' 
-            ? 'postcard-tab-active' 
-            : 'postcard-tab-inactive'
-        )}
-      >
-        DORSO
-      </button>
+      {TABS.map((tab, index) => (
+        <React.Fragment key={tab.id}>
+          {index > 0 && <div className="w-px bg-foreground" />}
+          <button
+            onClick={() => onTabChange(tab.id)}
+            className={cn(
+              'postcard-tab flex-1 transition-all duration-300',
+              activeTab === tab.id 
+                ? 'postcard-tab-active' 
+                : 'postcard-tab-inactive'
+            )}
+          >
+            {tab.label}
+          </button>
+        </React.Fragment>
+      ))}
     </div>
   );
 }

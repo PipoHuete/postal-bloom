@@ -62,9 +62,10 @@ export default function Gallery() {
     }
   };
 
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+
   const handleCameraClick = () => {
-    // In a real PWA, this would open the camera
-    fileInputRef.current?.click();
+    cameraInputRef.current?.click();
   };
 
   return (
@@ -90,11 +91,20 @@ export default function Gallery() {
             <ImagePlus className="w-5 h-5 mr-2" />
             Subir
           </Button>
+          {/* Camera input - opens camera directly on mobile */}
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="user"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+          {/* File input - opens gallery */}
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            capture="environment"
             onChange={handleFileUpload}
             className="hidden"
           />

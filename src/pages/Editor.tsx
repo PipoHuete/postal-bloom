@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Header } from '@/components/layout/Header';
 import { NavigationBar } from '@/components/layout/NavigationBar';
 import { PostcardTabs } from '@/components/postcard/PostcardTabs';
@@ -13,13 +14,33 @@ export default function Editor() {
   const [activeTab, setActiveTab] = useState<'anverso' | 'dorso'>('anverso');
 
   const handleBack = () => {
-    navigate('/gallery');
+    if (activeTab === 'dorso') {
+      setActiveTab('anverso');
+    } else {
+      navigate('/gallery');
+    }
+  };
+
+  const getMissingFields = () => {
+    const missing: string[] = [];
+    if (!postcard.message || postcard.message.trim() === '') {
+      missing.push('mensaje');
+    }
+    if (!postcard.contact && !postcard.recipientName) {
+      missing.push('destinatario');
+    }
+    return missing;
   };
 
   const handleNext = () => {
     if (activeTab === 'anverso') {
       setActiveTab('dorso');
     } else {
+      const missing = getMissingFields();
+      if (missing.length > 0) {
+        toast.error(`Faltan campos: ${missing.join(', ')}`);
+        return;
+      }
       navigate('/checkout');
     }
   };
@@ -28,8 +49,8 @@ export default function Editor() {
     if (activeTab === 'anverso') {
       return !postcard.image;
     }
-    // For dorso, check if required address fields are filled
-    return !postcard.recipientName || !postcard.addressLine1 || !postcard.city || !postcard.postalCode || !postcard.country;
+    // En dorso, siempre habilitado - la validación se hace al hacer clic
+    return false;
   };
 
   return (
