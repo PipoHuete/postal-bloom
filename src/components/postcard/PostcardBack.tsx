@@ -6,9 +6,12 @@ import { ContactsList } from '@/components/contacts/ContactsList';
 import { FontStyle } from '@/types/postcard';
 
 const FONT_CLASS_MAP: Record<FontStyle, string> = {
-  courier: 'font-courier',
-  bradley: 'font-bradley',
-  snell: 'font-snell',
+  caveat: 'font-caveat',
+  dancing: 'font-dancing',
+  vibes: 'font-vibes',
+  lora: 'font-lora',
+  merriweather: 'font-merriweather',
+  mono: 'font-mono',
 };
 
 export function PostcardBack() {
@@ -21,7 +24,7 @@ export function PostcardBack() {
     setFontStyle(fontStyle);
   };
 
-  const fontClass = FONT_CLASS_MAP[postcard.fontStyle] || 'font-courier';
+  const fontClass = FONT_CLASS_MAP[postcard.fontStyle] || 'font-caveat';
 
   return (
     <>

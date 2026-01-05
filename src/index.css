@@ -52,9 +52,12 @@
     /* Font families */
     --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', system-ui, sans-serif;
-    --font-courier: 'Courier Prime', 'Courier New', monospace;
-    --font-bradley: 'Bradley Hand', 'Brush Script MT', cursive;
-    --font-snell: 'Snell Roundhand', 'Brush Script MT', cursive;
+    --font-caveat: 'Caveat', cursive;
+    --font-dancing: 'Dancing Script', cursive;
+    --font-vibes: 'Great Vibes', cursive;
+    --font-lora: 'Lora', serif;
+    --font-merriweather: 'Merriweather', serif;
+    --font-mono: 'Roboto Mono', monospace;
   }
 
   .dark {
@@ -161,16 +164,28 @@
     font-family: var(--font-body);
   }
 
-  .font-courier {
-    font-family: var(--font-courier);
+  .font-caveat {
+    font-family: var(--font-caveat);
   }
 
-  .font-bradley {
-    font-family: var(--font-bradley);
+  .font-dancing {
+    font-family: var(--font-dancing);
   }
 
-  .font-snell {
-    font-family: var(--font-snell);
+  .font-vibes {
+    font-family: var(--font-vibes);
+  }
+
+  .font-lora {
+    font-family: var(--font-lora);
+  }
+
+  .font-merriweather {
+    font-family: var(--font-merriweather);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
   }
 
   .text-balance {

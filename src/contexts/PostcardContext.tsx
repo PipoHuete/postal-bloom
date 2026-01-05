@@ -15,7 +15,7 @@ interface PostcardContextType {
 const initialPostcard: PostcardData = {
   image: null,
   message: '',
-  fontStyle: 'courier',
+  fontStyle: 'caveat',
   contact: null,
   recipientName: '',
   addressLine1: '',
