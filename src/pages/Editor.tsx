@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Header } from '@/components/layout/Header';
@@ -7,11 +7,39 @@ import { PostcardTabs } from '@/components/postcard/PostcardTabs';
 import { PostcardFront } from '@/components/postcard/PostcardFront';
 import { PostcardBack } from '@/components/postcard/PostcardBack';
 import { usePostcard } from '@/contexts/PostcardContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Editor() {
   const navigate = useNavigate();
   const { postcard } = usePostcard();
   const [activeTab, setActiveTab] = useState<'anverso' | 'dorso'>('anverso');
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        navigate('/auth', { replace: true });
+      }
+      setCheckingAuth(false);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate('/auth', { replace: true });
+      }
+      setCheckingAuth(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
 
   const handleBack = () => {
     if (activeTab === 'dorso') {

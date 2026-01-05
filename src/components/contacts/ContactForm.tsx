@@ -5,6 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, { message: 'El nombre es obligatorio' }).max(100, { message: 'Nombre demasiado largo' }),
+  address: z.string().trim().min(1, { message: 'La dirección es obligatoria' }).max(200, { message: 'Dirección demasiado larga' }),
+  postalCode: z.string().trim().min(1, { message: 'El código postal es obligatorio' }).max(20, { message: 'Código postal demasiado largo' }).regex(/^[a-zA-Z0-9\s-]+$/, { message: 'Código postal inválido' }),
+  city: z.string().trim().min(1, { message: 'La ciudad es obligatoria' }).max(100, { message: 'Ciudad demasiado larga' }),
+});
 
 interface ContactFormProps {
   isOpen: boolean;
@@ -18,14 +26,29 @@ export function ContactForm({ isOpen, onClose, onContactAdded }: ContactFormProp
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; address?: string; postalCode?: string; city?: string }>({});
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
     
-    if (!name.trim() || !address.trim() || !postalCode.trim() || !city.trim()) {
-      toast.error('Por favor, completa todos los campos');
+    // Validate inputs
+    const result = contactSchema.safeParse({ 
+      name: name.trim(), 
+      address: address.trim(), 
+      postalCode: postalCode.trim(), 
+      city: city.trim() 
+    });
+    
+    if (!result.success) {
+      const fieldErrors: { name?: string; address?: string; postalCode?: string; city?: string } = {};
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as keyof typeof fieldErrors;
+        fieldErrors[field] = err.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
 
@@ -82,10 +105,15 @@ export function ContactForm({ isOpen, onClose, onContactAdded }: ContactFormProp
             <Input
               id="name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+              }}
               placeholder="Nombre completo"
-              className="border-2 border-border"
+              className={`border-2 ${errors.name ? 'border-destructive' : 'border-border'}`}
+              maxLength={100}
             />
+            {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
           </div>
 
           <div className="space-y-2">
@@ -93,10 +121,15 @@ export function ContactForm({ isOpen, onClose, onContactAdded }: ContactFormProp
             <Input
               id="address"
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(e) => {
+                setAddress(e.target.value);
+                if (errors.address) setErrors((prev) => ({ ...prev, address: undefined }));
+              }}
               placeholder="Calle y número"
-              className="border-2 border-border"
+              className={`border-2 ${errors.address ? 'border-destructive' : 'border-border'}`}
+              maxLength={200}
             />
+            {errors.address && <p className="text-sm text-destructive">{errors.address}</p>}
           </div>
 
           <div className="space-y-2">
@@ -104,10 +137,15 @@ export function ContactForm({ isOpen, onClose, onContactAdded }: ContactFormProp
             <Input
               id="postalCode"
               value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
+              onChange={(e) => {
+                setPostalCode(e.target.value);
+                if (errors.postalCode) setErrors((prev) => ({ ...prev, postalCode: undefined }));
+              }}
               placeholder="00000"
-              className="border-2 border-border"
+              className={`border-2 ${errors.postalCode ? 'border-destructive' : 'border-border'}`}
+              maxLength={20}
             />
+            {errors.postalCode && <p className="text-sm text-destructive">{errors.postalCode}</p>}
           </div>
 
           <div className="space-y-2">
@@ -115,10 +153,15 @@ export function ContactForm({ isOpen, onClose, onContactAdded }: ContactFormProp
             <Input
               id="city"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => {
+                setCity(e.target.value);
+                if (errors.city) setErrors((prev) => ({ ...prev, city: undefined }));
+              }}
               placeholder="Ciudad"
-              className="border-2 border-border"
+              className={`border-2 ${errors.city ? 'border-destructive' : 'border-border'}`}
+              maxLength={100}
             />
+            {errors.city && <p className="text-sm text-destructive">{errors.city}</p>}
           </div>
 
           <Button 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Header } from '@/components/layout/Header';
@@ -21,9 +21,36 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { postcard } = usePostcard();
   const [isSendingTest, setIsSendingTest] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   
   const filterOption = FILTERS.find(f => f.id === (postcard.image?.filter || 'none'));
   const fontClass = FONT_CLASS_MAP[postcard.fontStyle] || 'font-caveat';
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        navigate('/auth', { replace: true });
+      }
+      setCheckingAuth(false);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate('/auth', { replace: true });
+      }
+      setCheckingAuth(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
 
   const handlePay = () => {
     // Stripe integration will go here
@@ -64,7 +91,6 @@ export default function Checkout() {
 
       toast.success(`¡Email de prueba enviado a ${user.email}!`);
     } catch (error: any) {
-      console.error('Error sending test email:', error);
       toast.error('Error al enviar el email de prueba');
     } finally {
       setIsSendingTest(false);
