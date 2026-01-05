@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { usePostcard } from '@/contexts/PostcardContext';
+import { PaymentSimulationModal } from '@/components/checkout/PaymentSimulationModal';
 import { FILTERS, FontStyle } from '@/types/postcard';
 import { CreditCard, MapPin, Mail, Send, TestTube, Loader2, Stamp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,6 +24,7 @@ export default function Checkout() {
   const { postcard, resetPostcard } = usePostcard();
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   
   const filterOption = FILTERS.find(f => f.id === (postcard.image?.filter || 'none'));
@@ -309,20 +311,10 @@ export default function Checkout() {
           variant="postcard-nav"
           size="xl"
           className="w-full"
-          onClick={handlePlaceOrder}
-          disabled={isPlacingOrder}
+          onClick={() => setShowPaymentModal(true)}
         >
-          {isPlacingOrder ? (
-            <>
-              <Stamp className="w-5 h-5 mr-2 animate-bounce" />
-              Procesando...
-            </>
-          ) : (
-            <>
-              <Send className="w-5 h-5 mr-2" />
-              Confirmar Pedido - 2,68€
-            </>
-          )}
+          <Send className="w-5 h-5 mr-2" />
+          Pagar y Enviar - 2,68€
         </Button>
 
         <p className="text-xs text-muted-foreground text-center mt-4">
@@ -330,6 +322,14 @@ export default function Checkout() {
         </p>
       </main>
       </div>
+
+      {/* Payment Simulation Modal */}
+      <PaymentSimulationModal
+        open={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onConfirm={handlePlaceOrder}
+        isLoading={isPlacingOrder}
+      />
     </>
   );
 }
