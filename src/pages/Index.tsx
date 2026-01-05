@@ -25,7 +25,7 @@ export default function Index() {
           Saludos desde Roma!!
         </h1>
         
-        <p className="text-muted-foreground text-center max-w-xs mb-8 animate-fade-in">
+        <p className="text-foreground text-center max-w-xs mb-8 animate-fade-in">
           Envía postales físicas personalizadas a cualquier parte del mundo
         </p>
 
