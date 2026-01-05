@@ -22,7 +22,7 @@ export default function Index() {
 
         {/* Title */}
         <h1 className="font-display text-4xl font-bold text-foreground text-center mb-4 animate-fade-in">
-          Postales
+          SelfiePostal
         </h1>
         
         <p className="text-muted-foreground text-center max-w-xs mb-8 animate-fade-in">
