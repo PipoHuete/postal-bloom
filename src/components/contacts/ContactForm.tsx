@@ -49,7 +49,6 @@ export function ContactForm({ isOpen, onClose, onContactAdded }: ContactFormProp
 
     if (error) {
       toast.error('Error al guardar el contacto');
-      console.error(error);
     } else {
       toast.success('Contacto guardado');
       onContactAdded();

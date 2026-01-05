@@ -24,7 +24,7 @@ export function ContactsList({ isOpen, onClose, onSelectContact }: ContactsListP
       .order('name');
 
     if (error) {
-      console.error('Error fetching contacts:', error);
+      // Error logged server-side only
     } else {
       setContacts(data || []);
     }
