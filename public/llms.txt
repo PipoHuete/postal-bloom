@@ -1,0 +1,48 @@
+# SelfiePostal
+
+## What is this?
+SelfiePostal is a web application for creating and sending physical personalized postcards with a vintage aesthetic.
+
+## Core Features
+- Upload personal photos or select from gallery
+- Apply retro/vintage filters to images (B&W, Sepia, Vintage, Warm, Cool, Contrast)
+- Write custom messages with handwritten-style fonts (Caveat, Dancing Script, Great Vibes, Lora, Merriweather, Mono)
+- Send physical postcards to any address worldwide
+- Fast printing and shipping (24-48 business hours)
+
+## Technical Stack
+- Frontend: React 18 + TypeScript + Vite
+- Styling: Tailwind CSS with custom vintage/retro theme
+- Backend: Lovable Cloud (Supabase-powered: auth, database, edge functions)
+- Payment: Stripe integration
+
+## Product Details
+- Type: Physical postcard product
+- Price: EUR 2.68 (including 21% VAT)
+- Shipping: Worldwide, 24-48 business hours
+- Format: Premium vintage paper, standard postcard size
+
+## User Flow
+1. User selects or uploads a photo
+2. User applies optional vintage filters
+3. User writes a personalized message
+4. User enters recipient address
+5. User reviews postcard preview (front and back)
+6. User pays and confirms order
+7. Physical postcard is printed and shipped
+
+## Target Audience
+- Travelers wanting to send real postcards from trips
+- People seeking unique, personalized gifts
+- Users who value tangible, physical keepsakes over digital alternatives
+
+## Unique Value Proposition
+Combines the nostalgia of traditional postcards with modern convenience: upload any photo, customize with vintage filters, and have a real physical postcard delivered anywhere in the world.
+
+## API Endpoints
+- Authentication: Email/password signup and login
+- Edge Functions: send-test-postcard (email preview)
+- Database: contacts, postcards tables with RLS policies
+
+## Contact
+Built with Lovable (https://lovable.dev)

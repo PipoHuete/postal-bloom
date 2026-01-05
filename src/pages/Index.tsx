@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Send, Heart, Sparkles } from 'lucide-react';
@@ -8,7 +9,13 @@ export default function Index() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
+      <Helmet>
+        <title>SelfiePostal - Crea y Envía Postales Vintage Personalizadas</title>
+        <meta name="description" content="Personaliza y envía postales físicas reales con un estilo vintage único. Elige tu foto, aplica filtros retro y envíala a cualquier parte del mundo." />
+        <link rel="canonical" href="/" />
+      </Helmet>
+      <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         {/* Logo */}
@@ -68,6 +75,7 @@ export default function Index() {
           Desde <span className="font-semibold text-primary">2,68€</span> por postal
         </p>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }
