@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap');
 
 @layer base {
   :root {
@@ -52,6 +52,9 @@
     /* Font families */
     --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', system-ui, sans-serif;
+    --font-courier: 'Courier Prime', 'Courier New', monospace;
+    --font-bradley: 'Bradley Hand', 'Brush Script MT', cursive;
+    --font-snell: 'Snell Roundhand', 'Brush Script MT', cursive;
   }
 
   .dark {
@@ -156,6 +159,18 @@
 
   .font-body {
     font-family: var(--font-body);
+  }
+
+  .font-courier {
+    font-family: var(--font-courier);
+  }
+
+  .font-bradley {
+    font-family: var(--font-bradley);
+  }
+
+  .font-snell {
+    font-family: var(--font-snell);
   }
 
   .text-balance {

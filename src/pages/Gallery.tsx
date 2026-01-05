@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { NavigationBar } from '@/components/layout/NavigationBar';
@@ -7,6 +7,7 @@ import { usePostcard } from '@/contexts/PostcardContext';
 import { Button } from '@/components/ui/button';
 import { Camera, ImagePlus, Images } from 'lucide-react';
 import { PostcardImage } from '@/types/postcard';
+import { supabase } from '@/integrations/supabase/client';
 
 // Demo images - in production these would come from the device gallery
 const DEMO_IMAGES: PostcardImage[] = [
@@ -26,6 +27,14 @@ export default function Gallery() {
   const { postcard, setImage } = usePostcard();
   const [selectedId, setSelectedId] = useState<string | null>(postcard.image?.id || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        navigate('/auth');
+      }
+    });
+  }, [navigate]);
 
   const handleSelect = (image: PostcardImage) => {
     setSelectedId(image.id);
