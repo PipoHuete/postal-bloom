@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Send, Heart, Sparkles } from 'lucide-react';
-import portadaImage from '@/assets/portada.jpg';
+import portadaImage from '@/assets/portada.png';
 
 export default function Index() {
   const navigate = useNavigate();
