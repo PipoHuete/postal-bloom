@@ -14,9 +14,21 @@ export type ImageFilter =
   | 'cool' 
   | 'contrast';
 
+export type FontStyle = 'courier' | 'bradley' | 'snell';
+
+export interface Contact {
+  id: string;
+  name: string;
+  address: string;
+  postal_code: string;
+  city: string;
+}
+
 export interface PostcardData {
   image: PostcardImage | null;
   message: string;
+  fontStyle: FontStyle;
+  contact: Contact | null;
   recipientName: string;
   addressLine1: string;
   addressLine2: string;

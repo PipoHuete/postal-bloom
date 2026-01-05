@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contacts: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          id: string
+          name: string
+          postal_code: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string
+          id?: string
+          name: string
+          postal_code: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          id?: string
+          name?: string
+          postal_code?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      postcards: {
+        Row: {
+          contact_id: string | null
+          created_at: string
+          font_style: Database["public"]["Enums"]["font_style"] | null
+          id: string
+          image_filter: string | null
+          image_url: string | null
+          message: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string
+          font_style?: Database["public"]["Enums"]["font_style"] | null
+          id?: string
+          image_filter?: string | null
+          image_url?: string | null
+          message?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string
+          font_style?: Database["public"]["Enums"]["font_style"] | null
+          id?: string
+          image_filter?: string | null
+          image_url?: string | null
+          message?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "postcards_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +102,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      font_style: "courier" | "bradley" | "snell"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +229,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      font_style: ["courier", "bradley", "snell"],
+    },
   },
 } as const

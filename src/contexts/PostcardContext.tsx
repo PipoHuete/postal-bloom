@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { PostcardData, PostcardImage, ImageFilter } from '@/types/postcard';
+import { PostcardData, PostcardImage, ImageFilter, FontStyle, Contact } from '@/types/postcard';
 
 interface PostcardContextType {
   postcard: PostcardData;
   setImage: (image: PostcardImage | null) => void;
   setFilter: (filter: ImageFilter) => void;
   setMessage: (message: string) => void;
+  setFontStyle: (fontStyle: FontStyle) => void;
+  setContact: (contact: Contact | null) => void;
   setAddress: (address: Partial<PostcardData>) => void;
   resetPostcard: () => void;
 }
@@ -13,6 +15,8 @@ interface PostcardContextType {
 const initialPostcard: PostcardData = {
   image: null,
   message: '',
+  fontStyle: 'courier',
+  contact: null,
   recipientName: '',
   addressLine1: '',
   addressLine2: '',
@@ -43,6 +47,25 @@ export function PostcardProvider({ children }: { children: ReactNode }) {
     setPostcard(prev => ({ ...prev, message }));
   };
 
+  const setFontStyle = (fontStyle: FontStyle) => {
+    setPostcard(prev => ({ ...prev, fontStyle }));
+  };
+
+  const setContact = (contact: Contact | null) => {
+    if (contact) {
+      setPostcard(prev => ({
+        ...prev,
+        contact,
+        recipientName: contact.name,
+        addressLine1: contact.address,
+        postalCode: contact.postal_code,
+        city: contact.city,
+      }));
+    } else {
+      setPostcard(prev => ({ ...prev, contact: null }));
+    }
+  };
+
   const setAddress = (address: Partial<PostcardData>) => {
     setPostcard(prev => ({ ...prev, ...address }));
   };
@@ -58,6 +81,8 @@ export function PostcardProvider({ children }: { children: ReactNode }) {
         setImage,
         setFilter,
         setMessage,
+        setFontStyle,
+        setContact,
         setAddress,
         resetPostcard,
       }}
