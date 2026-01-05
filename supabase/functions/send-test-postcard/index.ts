@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { jsPDF } from "https://esm.sh/jspdf@2.5.1";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -24,26 +25,122 @@ interface PostcardEmailRequest {
   };
 }
 
-// Generate a simple PDF with two pages (front and back of postcard)
-// Page size: 10x15 cm (approximately 283x425 points at 72 DPI)
-function generatePostcardPDF(postcardData: PostcardEmailRequest['postcardData'], imageBase64: string): string {
-  const pageWidth = 425; // 15 cm in points (15 * 28.35)
-  const pageHeight = 283; // 10 cm in points (10 * 28.35)
+async function fetchImageAsBase64(imageUrl: string): Promise<{ base64: string; format: string } | null> {
+  try {
+    const response = await fetch(imageUrl);
+    if (!response.ok) return null;
+    
+    const contentType = response.headers.get('content-type') || '';
+    let format = 'JPEG';
+    if (contentType.includes('png')) format = 'PNG';
+    else if (contentType.includes('gif')) format = 'GIF';
+    else if (contentType.includes('webp')) format = 'WEBP';
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    let binary = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+      binary += String.fromCharCode(uint8Array[i]);
+    }
+    return { base64: btoa(binary), format };
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    return null;
+  }
+}
+
+async function generatePostcardPDF(postcardData: PostcardEmailRequest['postcardData']): Promise<string> {
+  // Create PDF with landscape 10x15 cm pages
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'cm',
+    format: [10, 15] // height x width in cm
+  });
+
+  const pageWidth = 15;
+  const pageHeight = 10;
+
+  // === PAGE 1: FRONT (Image) ===
+  // Try to add the image
+  if (postcardData.imageUrl) {
+    const imageData = await fetchImageAsBase64(postcardData.imageUrl);
+    if (imageData) {
+      try {
+        doc.addImage(
+          `data:image/${imageData.format.toLowerCase()};base64,${imageData.base64}`,
+          imageData.format,
+          0, 0,
+          pageWidth, pageHeight
+        );
+      } catch (imgError) {
+        console.error("Error adding image to PDF:", imgError);
+        // Add placeholder if image fails
+        doc.setFillColor(200, 200, 200);
+        doc.rect(0, 0, pageWidth, pageHeight, 'F');
+        doc.setFontSize(14);
+        doc.setTextColor(100, 100, 100);
+        doc.text('Imagen no disponible', pageWidth / 2, pageHeight / 2, { align: 'center' });
+      }
+    }
+  }
+
+  // Add small label
+  doc.setFontSize(6);
+  doc.setTextColor(255, 255, 255);
+  doc.text('ANVERSO', 0.3, pageHeight - 0.3);
+
+  // === PAGE 2: BACK (Message + Address) ===
+  doc.addPage([10, 15], 'landscape');
+
+  // Background color (cream/beige)
+  doc.setFillColor(250, 248, 245);
+  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+  // Vertical divider line (dashed)
+  doc.setDrawColor(180, 180, 180);
+  doc.setLineDashPattern([0.1, 0.1], 0);
+  doc.line(pageWidth / 2, 0.5, pageWidth / 2, pageHeight - 0.5);
+  doc.setLineDashPattern([], 0);
+
+  // LEFT SIDE: Message
+  const messageX = 0.5;
+  const messageY = 1;
+  const messageWidth = (pageWidth / 2) - 1;
+
+  // Set font based on style
+  let fontName = 'courier';
+  if (postcardData.fontStyle === 'bradley' || postcardData.fontStyle === 'snell') {
+    fontName = 'helvetica';
+  }
   
-  const fontFamily = {
-    courier: "Courier",
-    bradley: "Helvetica",
-    snell: "Helvetica-Oblique",
-  }[postcardData.fontStyle] || "Courier";
+  doc.setFont(fontName, postcardData.fontStyle === 'snell' ? 'italic' : 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(50, 50, 50);
 
-  // Clean the message for PDF (escape special characters)
-  const cleanMessage = (postcardData.message || '(Sin mensaje)')
-    .replace(/\\\\/g, '\\\\')
-    .replace(/\(/g, '\\(')
-    .replace(/\)/g, '\\)')
-    .replace(/\n/g, ') Tj T* (');
+  // Word wrap the message
+  const message = postcardData.message || '(Sin mensaje)';
+  const splitMessage = doc.splitTextToSize(message, messageWidth);
+  doc.text(splitMessage, messageX, messageY);
 
-  // Build address lines
+  // RIGHT SIDE: Stamp and Address
+  const addressX = (pageWidth / 2) + 0.5;
+
+  // Stamp box (top right)
+  const stampX = pageWidth - 2;
+  const stampY = 0.5;
+  const stampW = 1.5;
+  const stampH = 1.8;
+  
+  doc.setDrawColor(155, 127, 212);
+  doc.setLineDashPattern([0.1, 0.1], 0);
+  doc.rect(stampX, stampY, stampW, stampH);
+  doc.setLineDashPattern([], 0);
+  
+  doc.setFontSize(6);
+  doc.setTextColor(155, 127, 212);
+  doc.text('SELLO', stampX + stampW / 2, stampY + stampH / 2 + 0.1, { align: 'center' });
+
+  // Address lines
   const addressLines: string[] = [
     postcardData.recipientName,
     postcardData.addressLine1,
@@ -52,131 +149,40 @@ function generatePostcardPDF(postcardData: PostcardEmailRequest['postcardData'],
     postcardData.country,
   ].filter((line): line is string => Boolean(line));
 
-  // Create PDF content
-  const pdf = `%PDF-1.4
-1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
-endobj
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(30, 30, 30);
 
-2 0 obj
-<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>
-endobj
+  let addressY = 3.5;
+  const lineHeight = 0.6;
+  
+  // Draw address lines with underlines
+  doc.setDrawColor(200, 200, 200);
+  addressLines.forEach((line, index) => {
+    const y = addressY + (index * lineHeight);
+    if (index === 0) {
+      doc.setFont('helvetica', 'bold');
+    } else {
+      doc.setFont('helvetica', 'normal');
+    }
+    doc.text(line, addressX, y);
+    doc.line(addressX, y + 0.15, pageWidth - 0.5, y + 0.15);
+  });
 
-3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Contents 5 0 R /Resources << /XObject << /Img 7 0 R >> /Font << /F1 8 0 R >> >> >>
-endobj
+  // Add small label
+  doc.setFontSize(6);
+  doc.setTextColor(150, 150, 150);
+  doc.text('DORSO - Postal 10x15cm', 0.3, pageHeight - 0.3);
 
-4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Contents 6 0 R /Resources << /Font << /F1 8 0 R /F2 9 0 R >> >> >>
-endobj
-
-5 0 obj
-<< /Length 100 >>
-stream
-q
-${pageWidth} 0 0 ${pageHeight} 0 0 cm
-/Img Do
-Q
-BT
-/F1 8 Tf
-10 10 Td
-(ANVERSO - Postal 10x15cm) Tj
-ET
-endstream
-endobj
-
-6 0 obj
-<< /Length 800 >>
-stream
-q
-0.95 0.93 0.91 rg
-0 0 ${pageWidth} ${pageHeight} re f
-Q
-
-q
-0.8 0.8 0.8 RG
-0.5 w
-${pageWidth / 2} 20 m
-${pageWidth / 2} ${pageHeight - 20} l
-S
-Q
-
-BT
-/F2 11 Tf
-1 0 0 1 20 ${pageHeight - 40} Tm
-12 TL
-(${cleanMessage}) Tj
-ET
-
-q
-0.6 0.5 0.7 RG
-1 w
-${pageWidth - 70} ${pageHeight - 70} 50 60 re S
-Q
-
-BT
-/F1 8 Tf
-0.6 0.5 0.7 rg
-${pageWidth - 60} ${pageHeight - 45} Td
-(SELLO) Tj
-ET
-
-BT
-/F1 10 Tf
-0 0 0 rg
-1 0 0 1 ${pageWidth / 2 + 20} ${pageHeight - 100} Tm
-14 TL
-${addressLines.map(line => `(${line.replace(/\\\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)')}) Tj T*`).join('\n')}
-ET
-
-BT
-/F1 8 Tf
-0.5 0.5 0.5 rg
-10 10 Td
-(DORSO - Postal 10x15cm) Tj
-ET
-endstream
-endobj
-
-7 0 obj
-<< /Type /XObject /Subtype /Image /Width 600 /Height 400 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imageBase64.length} >>
-stream
-${imageBase64}
-endstream
-endobj
-
-8 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
-endobj
-
-9 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /${fontFamily} >>
-endobj
-
-xref
-0 10
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000280 00000 n 
-0000000445 00000 n 
-0000000598 00000 n 
-0000001451 00000 n 
-0000001700 00000 n 
-0000001769 00000 n 
-
-trailer
-<< /Size 10 /Root 1 0 R >>
-startxref
-1840
-%%EOF`;
-
-  return pdf;
+  // Get PDF as base64
+  const pdfOutput = doc.output('datauristring');
+  // Remove the data URI prefix to get just the base64
+  const base64 = pdfOutput.split(',')[1];
+  
+  return base64;
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -193,24 +199,12 @@ const handler = async (req: Request): Promise<Response> => {
       snell: "'Snell Roundhand', cursive",
     }[postcardData.fontStyle] || "'Courier New', monospace";
 
-    // Fetch the image and convert to base64 for the PDF
-    let imageBase64 = "";
-    try {
-      if (postcardData.imageUrl) {
-        const imageResponse = await fetch(postcardData.imageUrl);
-        const imageBuffer = await imageResponse.arrayBuffer();
-        const uint8Array = new Uint8Array(imageBuffer);
-        let binary = '';
-        for (let i = 0; i < uint8Array.length; i++) {
-          binary += String.fromCharCode(uint8Array[i]);
-        }
-        imageBase64 = btoa(binary);
-      }
-    } catch (imgError) {
-      console.error("Error fetching image for PDF:", imgError);
-    }
+    // Generate PDF
+    console.log("Generating PDF...");
+    const pdfBase64 = await generatePostcardPDF(postcardData);
+    console.log("PDF generated successfully, size:", pdfBase64.length);
 
-    // Generate HTML email with postcard preview (keeping this for visual preview)
+    // Generate HTML email with postcard preview
     const emailHtml = `
       <!DOCTYPE html>
       <html>
@@ -245,8 +239,8 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           <div class="content">
             <div class="pdf-notice">
-              <h3>📎 PDF Adjunto para Imprimir</h3>
-              <p>Hemos adjuntado un PDF con el anverso y dorso de la postal en tamaño 10x15 cm, listo para imprimir a doble cara.</p>
+              <h3>📎 PDF Adjunto Listo para Imprimir</h3>
+              <p>Hemos adjuntado un archivo PDF con el anverso y dorso de la postal en tamaño exacto 10x15 cm, optimizado para impresión a doble cara.</p>
             </div>
 
             <!-- Front (Anverso) -->
@@ -278,118 +272,14 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
           </div>
           <div class="footer">
-            Este es un email de prueba. El PDF adjunto contiene la postal lista para imprimir en formato 10x15 cm.
+            Este es un email de prueba. El PDF adjunto está listo para imprimir en formato 10x15 cm a doble cara.
           </div>
         </div>
       </body>
       </html>
     `;
 
-    // Create a simple HTML-based "PDF" as base64 for attachment
-    // Note: For a real PDF, we'd need a PDF library. This creates a printable HTML file.
-    const printableHtml = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Postal 10x15cm</title>
-  <style>
-    @page { size: 15cm 10cm landscape; margin: 0; }
-    @media print {
-      body { margin: 0; }
-      .page { page-break-after: always; }
-      .page:last-child { page-break-after: auto; }
-    }
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; }
-    .page { 
-      width: 15cm; 
-      height: 10cm; 
-      position: relative; 
-      overflow: hidden;
-      box-sizing: border-box;
-    }
-    .front-page { background: #000; }
-    .front-page img { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      filter: ${postcardData.imageFilter};
-    }
-    .back-page { 
-      background: #faf8f5; 
-      display: flex; 
-      padding: 15px;
-    }
-    .message-area { 
-      flex: 1; 
-      border-right: 1px dashed #999; 
-      padding-right: 15px;
-      font-family: ${fontFamily};
-      font-size: 12px;
-      line-height: 1.5;
-    }
-    .address-area { 
-      flex: 1; 
-      padding-left: 15px;
-      display: flex;
-      flex-direction: column;
-    }
-    .stamp { 
-      width: 40px; 
-      height: 50px; 
-      border: 2px dashed #9b7fd4; 
-      align-self: flex-end;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8px;
-      color: #9b7fd4;
-    }
-    .address-lines { 
-      margin-top: auto; 
-      font-size: 11px;
-    }
-    .address-line { 
-      border-bottom: 1px solid #ccc; 
-      padding: 3px 0; 
-      margin-bottom: 3px; 
-    }
-  </style>
-</head>
-<body>
-  <!-- Página 1: Anverso -->
-  <div class="page front-page">
-    <img src="${postcardData.imageUrl}" alt="Postal" />
-  </div>
-  
-  <!-- Página 2: Dorso -->
-  <div class="page back-page">
-    <div class="message-area">
-      ${(postcardData.message || '').replace(/\n/g, '<br>')}
-    </div>
-    <div class="address-area">
-      <div class="stamp">SELLO</div>
-      <div class="address-lines">
-        <div class="address-line"><strong>${postcardData.recipientName}</strong></div>
-        <div class="address-line">${postcardData.addressLine1}</div>
-        ${postcardData.addressLine2 ? `<div class="address-line">${postcardData.addressLine2}</div>` : ''}
-        <div class="address-line">${postcardData.postalCode} ${postcardData.city}</div>
-        ${postcardData.country ? `<div class="address-line">${postcardData.country}</div>` : ''}
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
-    // Encode the printable HTML as base64
-    const encoder = new TextEncoder();
-    const printableBytes = encoder.encode(printableHtml);
-    let printableBase64 = '';
-    for (let i = 0; i < printableBytes.length; i++) {
-      printableBase64 += String.fromCharCode(printableBytes[i]);
-    }
-    printableBase64 = btoa(printableBase64);
-
-    // Send email with attachment
+    // Send email with PDF attachment
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -399,13 +289,13 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         from: "Postales <onboarding@resend.dev>",
         to: [recipientEmail],
-        subject: "📮 Postal de Prueba - Vista Previa + PDF para Imprimir",
+        subject: "📮 Postal de Prueba - PDF para Imprimir (10x15cm)",
         html: emailHtml,
         attachments: [
           {
-            filename: "postal_10x15cm.html",
-            content: printableBase64,
-            type: "text/html",
+            filename: "postal_10x15cm.pdf",
+            content: pdfBase64,
+            type: "application/pdf",
           }
         ],
       }),
@@ -418,7 +308,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(emailResponse.message || "Failed to send email");
     }
 
-    console.log("Email sent successfully with printable attachment:", emailResponse);
+    console.log("Email sent successfully with PDF attachment:", emailResponse);
 
     return new Response(JSON.stringify({ success: true, data: emailResponse }), {
       status: 200,
