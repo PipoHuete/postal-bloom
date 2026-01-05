@@ -95,6 +95,32 @@ export default function Checkout() {
 
       if (error) throw error;
 
+      // Send order confirmation email (non-blocking)
+      try {
+        await supabase.functions.invoke('send-order-confirmation', {
+          body: {
+            orderId: order.id,
+            recipientEmail: user.email,
+            postcardData: {
+              imageUrl: postcard.image?.url || '',
+              imageFilter: filterOption?.cssFilter || 'none',
+              message: postcard.message,
+              fontStyle: postcard.fontStyle,
+              recipientName: postcard.recipientName,
+              addressLine1: postcard.addressLine1,
+              addressLine2: postcard.addressLine2,
+              postalCode: postcard.postalCode,
+              city: postcard.city,
+              country: postcard.country,
+            },
+          },
+        });
+        console.log('Order confirmation email sent successfully');
+      } catch (emailError) {
+        console.error('Error sending order confirmation email:', emailError);
+        // Don't block the flow - order is already saved
+      }
+
       // Reset postcard and navigate to success
       resetPostcard();
       navigate(`/order-success?order=${order.id}`);
