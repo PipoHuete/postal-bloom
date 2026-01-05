@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Send, Heart, Sparkles } from 'lucide-react';
-import postalesLogo from '@/assets/postales-logo.png';
+import portadaImage from '@/assets/portada.jpg';
 
 export default function Index() {
   const navigate = useNavigate();
@@ -14,9 +14,9 @@ export default function Index() {
         {/* Logo */}
         <div className="mb-8 animate-fade-in">
           <img 
-            src={postalesLogo} 
-            alt="Postales logo" 
-            className="w-20 h-20 rounded-2xl shadow-hover object-cover"
+            src={portadaImage} 
+            alt="SelfiePostal - Envía postales personalizadas" 
+            className="w-72 h-auto rounded-2xl shadow-hover object-cover"
           />
         </div>
 
