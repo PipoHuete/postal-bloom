@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Mail, Send, Heart, Sparkles } from 'lucide-react';
+import { Send, Heart, Sparkles } from 'lucide-react';
+import postalesLogo from '@/assets/postales-logo.png';
 
 export default function Index() {
   const navigate = useNavigate();
@@ -12,9 +13,11 @@ export default function Index() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         {/* Logo */}
         <div className="mb-8 animate-fade-in">
-          <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-hover">
-            <Mail className="w-10 h-10 text-primary-foreground" />
-          </div>
+          <img 
+            src={postalesLogo} 
+            alt="Postales logo" 
+            className="w-20 h-20 rounded-2xl shadow-hover object-cover"
+          />
         </div>
 
         {/* Title */}
@@ -56,7 +59,6 @@ export default function Index() {
           className="animate-fade-in"
         >
           Crear Postal
-          <Mail className="w-5 h-5 ml-2" />
         </Button>
       </div>
 
