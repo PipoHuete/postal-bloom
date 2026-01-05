@@ -16,7 +16,7 @@ export default function Index() {
           <img 
             src={portadaImage} 
             alt="SelfiePostal - Envía postales personalizadas" 
-            className="w-72 h-auto rounded-2xl shadow-hover object-cover"
+            className="w-full h-auto rounded-2xl shadow-hover object-cover"
           />
         </div>
 
