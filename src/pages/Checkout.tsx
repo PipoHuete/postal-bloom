@@ -31,9 +31,17 @@ export default function Checkout() {
     setIsSendingTest(true);
     
     try {
+      // Obtener el email del usuario autenticado
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user?.email) {
+        toast.error('No se pudo obtener tu email. Inicia sesión de nuevo.');
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('send-test-postcard', {
         body: {
-          recipientEmail: 'test@example.com', // Cambiar por tu email real
+          recipientEmail: user.email, // Usar el email del usuario autenticado
           postcardData: {
             imageUrl: postcard.image?.url || '',
             imageFilter: filterOption?.cssFilter || 'none',
@@ -51,7 +59,7 @@ export default function Checkout() {
 
       if (error) throw error;
 
-      toast.success('¡Email de prueba enviado correctamente!');
+      toast.success(`¡Email de prueba enviado a ${user.email}!`);
     } catch (error: any) {
       console.error('Error sending test email:', error);
       toast.error('Error al enviar el email de prueba');
