@@ -199,9 +199,10 @@ export default function Checkout() {
   return (
     <>
       <Helmet>
-        <title>Tu Carrito - SelfiePostal</title>
-        <meta name="description" content="Revisa tu postal personalizada antes de enviarla. Impresión premium y envío en 24-48h laborables." />
-        <link rel="canonical" href="/checkout" />
+        <title>Confirmar Postal Personalizada | Carrito - SelfiePostal</title>
+        <meta name="description" content="Revisa tu postal vintage personalizada antes de enviarla. Impresión premium en papel de alta calidad y envío físico real en 24-48h laborables." />
+        <link rel="canonical" href="https://selfiepostal.com/checkout" />
+        <meta name="robots" content="noindex, nofollow" />
         <script type="application/ld+json">
           {JSON.stringify(productSchema)}
         </script>
@@ -211,30 +212,31 @@ export default function Checkout() {
       
       <main className="container px-4 py-6 max-w-lg mx-auto">
         {/* Postcard Previews */}
-        <div className="mb-6">
-          <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
-            <Mail className="w-5 h-5 text-primary" />
-            Tu Postal
-          </h2>
+        <section className="mb-6" aria-label="Vista previa de tu postal">
+          <h1 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
+            <Mail className="w-5 h-5 text-primary" aria-hidden="true" />
+            Tu Postal Personalizada
+          </h1>
           
           {/* Front Preview (Anverso) */}
-          <div className="mb-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 font-medium">Anverso</p>
+          <figure className="mb-4">
+            <figcaption className="text-xs text-muted-foreground uppercase tracking-wider mb-2 font-medium">Anverso</figcaption>
             <div className="postcard-container aspect-[3/2] relative overflow-hidden">
               {postcard.image && (
                 <img
                   src={postcard.image.url}
-                  alt={`Vista previa del anverso de tu postal personalizada${filterOption ? ` con filtro ${filterOption.name}` : ''}`}
+                  alt={`Postal vintage personalizada con filtro retro ${filterOption?.name || 'original'} - lista para enviar por correo físico`}
                   className="w-full h-full object-cover"
                   style={{ filter: filterOption?.cssFilter || 'none' }}
+                  loading="lazy"
                 />
               )}
             </div>
-          </div>
+          </figure>
 
           {/* Back Preview (Dorso) */}
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 font-medium">Dorso</p>
+          <figure>
+            <figcaption className="text-xs text-muted-foreground uppercase tracking-wider mb-2 font-medium">Dorso</figcaption>
             <div className="postcard-container bg-postcard-cream p-4 aspect-[3/2]">
               <div className="flex gap-3 h-full">
                 {/* Left Side - Message */}
@@ -245,14 +247,14 @@ export default function Checkout() {
                 </div>
 
                 {/* Divider */}
-                <div className="w-px bg-border" />
+                <div className="w-px bg-border" aria-hidden="true" />
 
                 {/* Right Side - Address */}
-                <div className="flex-1 flex flex-col gap-1">
+                <address className="flex-1 flex flex-col gap-1 not-italic">
                   {/* Stamp Area */}
                   <div className="flex justify-end mb-2">
                     <div className="w-10 h-12 border-2 border-dashed border-postcard-stamp flex items-center justify-center">
-                      <Stamp className="w-5 h-5 text-postcard-stamp" />
+                      <Stamp className="w-5 h-5 text-postcard-stamp" aria-hidden="true" />
                     </div>
                   </div>
 
@@ -264,20 +266,20 @@ export default function Checkout() {
                       {postcard.postalCode} {postcard.city}
                     </p>
                   </div>
-                </div>
+                </address>
               </div>
             </div>
-          </div>
-        </div>
+          </figure>
+        </section>
 
         {/* Address Summary */}
-        <div className="mb-6">
+        <section className="mb-6" aria-label="Dirección de envío de la postal">
           <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-primary" />
+            <MapPin className="w-5 h-5 text-primary" aria-hidden="true" />
             Dirección de Envío
           </h2>
           
-          <div className="bg-secondary rounded-lg p-4 space-y-1">
+          <address className="bg-secondary rounded-lg p-4 space-y-1 not-italic">
             <p className="font-medium">{postcard.recipientName}</p>
             <p className="text-sm text-muted-foreground">{postcard.addressLine1}</p>
             {postcard.addressLine2 && (
@@ -289,19 +291,19 @@ export default function Checkout() {
             {postcard.country && (
               <p className="text-sm text-muted-foreground">{postcard.country}</p>
             )}
-          </div>
-        </div>
+          </address>
+        </section>
 
         {/* Price Summary */}
-        <div className="mb-6">
+        <section className="mb-6" aria-label="Resumen del pago">
           <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-primary" />
+            <CreditCard className="w-5 h-5 text-primary" aria-hidden="true" />
             Resumen del Pago
           </h2>
           
           <div className="bg-secondary rounded-lg p-4">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-muted-foreground">Subtotal (postal personalizada)</span>
               <span className="font-medium">2,21€</span>
             </div>
             <div className="flex justify-between items-center mb-2">
@@ -315,7 +317,7 @@ export default function Checkout() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Test Email Button */}
         <Button

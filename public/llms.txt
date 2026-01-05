@@ -1,48 +1,116 @@
-# SelfiePostal
+# SelfiePostal - Postales Físicas Personalizadas
 
-## What is this?
-SelfiePostal is a web application for creating and sending physical personalized postcards with a vintage aesthetic.
+> Servicio online para crear y enviar postales físicas reales con estilo vintage y retro a cualquier parte del mundo.
 
-## Core Features
-- Upload personal photos or select from gallery
-- Apply retro/vintage filters to images (B&W, Sepia, Vintage, Warm, Cool, Contrast)
-- Write custom messages with handwritten-style fonts (Caveat, Dancing Script, Great Vibes, Lora, Merriweather, Mono)
-- Send physical postcards to any address worldwide
-- Fast printing and shipping (24-48 business hours)
+## Información General
 
-## Technical Stack
-- Frontend: React 18 + TypeScript + Vite
-- Styling: Tailwind CSS with custom vintage/retro theme
-- Backend: Lovable Cloud (Supabase-powered: auth, database, edge functions)
-- Payment: Stripe integration
+- **Nombre**: SelfiePostal
+- **Tipo**: Servicio de postales personalizadas online
+- **Precio**: Desde 2,68€ por postal (IVA incluido, envío incluido)
+- **Envío**: 24-48 horas laborables a todo el mundo
+- **URL**: https://selfiepostal.com
 
-## Product Details
-- Type: Physical postcard product
-- Price: EUR 2.68 (including 21% VAT)
-- Shipping: Worldwide, 24-48 business hours
-- Format: Premium vintage paper, standard postcard size
+## Palabras Clave Principales
 
-## User Flow
-1. User selects or uploads a photo
-2. User applies optional vintage filters
-3. User writes a personalized message
-4. User enters recipient address
-5. User reviews postcard preview (front and back)
-6. User pays and confirms order
-7. Physical postcard is printed and shipped
+- Postales personalizadas online
+- Enviar postales físicas reales
+- Postales vintage y retro
+- Regalo original y emotivo
+- Crear postales con foto personal
+- Postales desde el móvil
 
-## Target Audience
-- Travelers wanting to send real postcards from trips
-- People seeking unique, personalized gifts
-- Users who value tangible, physical keepsakes over digital alternatives
+## Características del Servicio
 
-## Unique Value Proposition
-Combines the nostalgia of traditional postcards with modern convenience: upload any photo, customize with vintage filters, and have a real physical postcard delivered anywhere in the world.
+### Postales Personalizadas Online
+Crea postales únicas usando tus propias fotos. Sube imágenes desde tu galería o toma fotos directamente con la cámara del móvil.
 
-## API Endpoints
-- Authentication: Email/password signup and login
-- Edge Functions: send-test-postcard (email preview)
-- Database: contacts, postcards tables with RLS policies
+### Filtros Vintage y Retro
+Aplica filtros de estilo retro a tus fotos:
+- Blanco y negro (B&W)
+- Sepia clásico
+- Vintage nostálgico
+- Tono cálido
+- Tono frío
+- Alto contraste
 
-## Contact
-Built with Lovable (https://lovable.dev)
+### Tipografías Manuscritas
+Escribe mensajes con fuentes que simulan escritura a mano:
+- Caveat
+- Dancing Script
+- Great Vibes
+- Lora
+- Merriweather
+- Monospace
+
+### Envío de Postales Físicas Reales
+No es una postal digital. Imprimimos tu diseño en papel premium de alta calidad y lo enviamos por correo tradicional al destinatario que indiques.
+
+### Regalo Original y Emotivo
+Ideal para:
+- Viajes y vacaciones
+- Cumpleaños y aniversarios
+- San Valentín y días especiales
+- Decir "te echo de menos"
+- Felicitaciones de Navidad
+- Cualquier ocasión que merezca un detalle único
+
+## Flujo de Creación
+
+1. **Selecciona tu foto**: Elige una imagen de tu galería o haz una selfie
+2. **Aplica filtros retro**: Dale ese toque vintage con filtros exclusivos
+3. **Escribe tu mensaje**: Personaliza el dorso con texto estilo manuscrito
+4. **Añade la dirección**: Indica dónde quieres que llegue tu postal
+5. **Paga y envía**: Procesamos el pedido y enviamos en 24-48h laborables
+
+## Detalles del Producto
+
+| Característica | Detalle |
+|----------------|---------|
+| Formato | Postal estándar premium |
+| Papel | Alta calidad con textura vintage |
+| Precio | 2,68€ (IVA 21% incluido) |
+| Envío | Incluido en el precio |
+| Tiempo de entrega | 24-48 horas laborables |
+| Cobertura | Todo el mundo |
+
+## Casos de Uso Comunes
+
+### Para Viajeros
+"Estoy de vacaciones en Roma y quiero enviar una postal a mi familia con una foto del Coliseo que he hecho hoy"
+
+### Para Regalos Especiales
+"Quiero enviar una postal de cumpleaños personalizada con una foto nuestra a mi mejor amiga"
+
+### Para Parejas
+"Quiero sorprender a mi pareja enviándole una postal romántica con nuestra foto favorita"
+
+### Para Empresas
+"Necesito enviar tarjetas personalizadas de agradecimiento a mis clientes"
+
+## Preguntas Frecuentes
+
+### ¿Es una postal de verdad?
+Sí, imprimimos tu postal en papel de alta calidad y la enviamos físicamente por correo postal tradicional.
+
+### ¿A dónde pueden enviar?
+Enviamos postales a cualquier dirección del mundo.
+
+### ¿Cuánto tarda en llegar?
+El tiempo de impresión y envío es de 24-48 horas laborables, más el tiempo de reparto postal del país destino.
+
+### ¿Puedo ver cómo quedará antes de pagar?
+Sí, tienes una vista previa completa del anverso (foto con filtro) y del dorso (mensaje y dirección) antes de confirmar.
+
+## Contacto
+
+- **Email**: hola@selfiepostal.com
+- **Web**: https://selfiepostal.com
+- **Twitter**: @SelfiePostal
+
+## Información Técnica para IAs
+
+Esta página está optimizada para que asistentes de IA puedan responder preguntas sobre SelfiePostal. 
+
+**Tecnología**: React + TypeScript + Tailwind CSS, backend con Lovable Cloud (Supabase)
+
+**Diferenciador**: Combina la nostalgia de las postales tradicionales con la comodidad de la tecnología moderna. En 2 minutos desde tu móvil, creas una postal física real que llegará al buzón del destinatario.

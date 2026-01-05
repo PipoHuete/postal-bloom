@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Header } from '@/components/layout/Header';
@@ -82,28 +83,36 @@ export default function Editor() {
   };
 
   return (
-    <div className="min-h-screen pb-24">
-      <Header title="Editar Postal" showBack />
-      
-      <main className="container px-4 py-6 max-w-lg mx-auto">
-        {/* Tabs */}
-        <div className="mb-6">
-          <PostcardTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
+    <>
+      <Helmet>
+        <title>Personaliza tu Postal Vintage | Filtros Retro - SelfiePostal</title>
+        <meta name="description" content="Aplica filtros vintage y retro a tu foto, escribe un mensaje personalizado y añade la dirección del destinatario. Crea una postal única en minutos." />
+        <link rel="canonical" href="https://selfiepostal.com/editor" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="min-h-screen pb-24">
+        <Header title="Personaliza tu Postal" showBack />
+        
+        <main className="container px-4 py-6 max-w-lg mx-auto">
+          {/* Tabs */}
+          <nav className="mb-6" aria-label="Pasos de edición de postal">
+            <PostcardTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          </nav>
 
-        {/* Content */}
-        <div className="relative">
-          {activeTab === 'anverso' ? <PostcardFront /> : <PostcardBack />}
-        </div>
-      </main>
+          {/* Content */}
+          <section aria-label={activeTab === 'anverso' ? 'Anverso de la postal - Foto y filtros' : 'Dorso de la postal - Mensaje y dirección'}>
+            {activeTab === 'anverso' ? <PostcardFront /> : <PostcardBack />}
+          </section>
+        </main>
 
-      <NavigationBar
-        onBack={handleBack}
-        onNext={handleNext}
-        backLabel={activeTab === 'dorso' ? 'Anverso' : 'Galería'}
-        nextLabel={activeTab === 'dorso' ? 'Pagar' : 'Dorso'}
-        nextDisabled={isNextDisabled()}
-      />
-    </div>
+        <NavigationBar
+          onBack={handleBack}
+          onNext={handleNext}
+          backLabel={activeTab === 'dorso' ? 'Anverso' : 'Galería'}
+          nextLabel={activeTab === 'dorso' ? 'Pagar' : 'Dorso'}
+          nextDisabled={isNextDisabled()}
+        />
+      </div>
+    </>
   );
 }
