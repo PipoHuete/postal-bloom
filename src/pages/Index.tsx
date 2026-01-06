@@ -83,16 +83,16 @@ export default function Index() {
       </Helmet>
       <div className="min-h-screen flex flex-col">
         {/* Hero Section */}
-        <main className="flex-1 flex flex-col items-center px-6 py-12">
+        <main className="flex-1 flex flex-col items-center px-6 py-12 overflow-visible">
           {/* Hero Image */}
-          <figure className="mb-8 animate-fade-in w-full max-w-2xl px-0">
+          <figure className="mb-8 animate-fade-in w-full max-w-4xl px-0 overflow-visible">
             <img 
               src={portadaImage} 
               alt="Postal vintage personalizada con filtro retro - ejemplo de postal física que puedes crear y enviar" 
               className="w-full h-auto rounded-2xl shadow-hover object-cover"
               loading="eager"
-              width="672"
-              height="448"
+              width="874"
+              height="583"
             />
           </figure>
 
