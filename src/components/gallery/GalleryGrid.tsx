@@ -33,15 +33,6 @@ export function GalleryGrid({ images, selectedId, onSelect }: GalleryGridProps) 
             alt=""
             className="w-full h-full object-cover"
             loading="lazy"
-            crossOrigin="anonymous"
-            onError={(e) => {
-              const target = e.currentTarget;
-              target.style.display = 'none';
-              const fallback = document.createElement('div');
-              fallback.className = 'w-full h-full flex items-center justify-center bg-muted text-muted-foreground text-xs';
-              fallback.textContent = 'Error';
-              target.parentElement?.appendChild(fallback);
-            }}
           />
           {selectedId === image.id && (
             <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
