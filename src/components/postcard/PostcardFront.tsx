@@ -19,15 +19,6 @@ export function PostcardFront() {
             alt={`Vista previa de tu postal personalizada${filterOption ? ` con filtro ${filterOption.name}` : ''}`}
             className="w-full h-full object-cover transition-all duration-500"
             style={{ filter: filterOption?.cssFilter || 'none' }}
-            crossOrigin="anonymous"
-            onError={(e) => {
-              const target = e.currentTarget;
-              // Retry without crossOrigin for blob/data URLs
-              if (target.crossOrigin) {
-                target.crossOrigin = '';
-                target.src = postcard.image!.url;
-              }
-            }}
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-secondary gap-4">
