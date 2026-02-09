@@ -28,6 +28,14 @@ export function ImageFilters({ imageUrl, activeFilter, onFilterChange }: ImageFi
               alt={filter.name}
               className="w-full h-full object-cover"
               style={{ filter: filter.cssFilter }}
+              crossOrigin="anonymous"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (target.crossOrigin) {
+                  target.crossOrigin = '';
+                  target.src = imageUrl;
+                }
+              }}
             />
           </div>
           <span className="text-xs font-medium text-muted-foreground">
