@@ -68,13 +68,21 @@ export default function Checkout() {
         return;
       }
 
-      // Validate required fields
       if (!postcard.recipientName || !postcard.addressLine1 || !postcard.postalCode || !postcard.city) {
         toast.error('Faltan datos del destinatario. Vuelve al editor.');
         return;
       }
 
-      // Create order in database
+      // Upload image to storage to get a public URL
+      let publicImageUrl = postcard.image?.url || '';
+      if (publicImageUrl) {
+        try {
+          publicImageUrl = await uploadPostcardImage(publicImageUrl);
+        } catch (uploadErr) {
+          console.error('Error uploading image:', uploadErr);
+        }
+      }
+
       const { data: order, error } = await supabase
         .from('orders')
         .insert({
@@ -84,7 +92,7 @@ export default function Checkout() {
           recipient_address: postcard.addressLine1 + (postcard.addressLine2 ? `, ${postcard.addressLine2}` : ''),
           recipient_postal_code: postcard.postalCode,
           recipient_city: postcard.city,
-          image_url: postcard.image?.url || null,
+          image_url: publicImageUrl || null,
           image_filter: postcard.image?.filter || 'none',
           message: postcard.message || '',
           font_style: postcard.fontStyle,
