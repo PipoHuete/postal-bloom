@@ -121,8 +121,8 @@ export default function Editor() {
         <NavigationBar
           onBack={handleBack}
           onNext={handleNext}
-          backLabel={activeTab === 'dorso' ? 'Anverso' : 'Galería'}
-          nextLabel={activeTab === 'dorso' ? 'Pagar' : 'Dorso'}
+          backLabel={activeTab === 'preview' ? 'Dorso' : activeTab === 'dorso' ? 'Anverso' : 'Galería'}
+          nextLabel={activeTab === 'preview' ? 'Pagar' : activeTab === 'dorso' ? 'Continuar' : 'Dorso'}
           nextDisabled={isNextDisabled()}
         />
       </div>
