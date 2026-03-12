@@ -9,6 +9,7 @@ interface PostcardTabsProps {
 const TABS = [
   { id: 'anverso' as const, label: 'ANVERSO' },
   { id: 'dorso' as const, label: 'DORSO' },
+  { id: 'preview' as const, label: 'PREVIEW' },
 ];
 
 export function PostcardTabs({ activeTab, onTabChange }: PostcardTabsProps) {
