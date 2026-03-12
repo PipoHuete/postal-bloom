@@ -113,8 +113,8 @@ export default function Editor() {
           </nav>
 
           {/* Content */}
-          <section aria-label={activeTab === 'anverso' ? 'Anverso de la postal - Foto y filtros' : 'Dorso de la postal - Mensaje y dirección'}>
-            {activeTab === 'anverso' ? <PostcardFront /> : <PostcardBack />}
+          <section aria-label={activeTab === 'anverso' ? 'Anverso de la postal - Foto y filtros' : activeTab === 'dorso' ? 'Dorso de la postal - Mensaje y dirección' : 'Vista previa de la postal'}>
+            {activeTab === 'anverso' ? <PostcardFront /> : activeTab === 'dorso' ? <PostcardBack /> : <PostcardPreview />}
           </section>
         </main>
 
