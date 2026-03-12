@@ -9,6 +9,7 @@ import { PaymentSimulationModal } from '@/components/checkout/PaymentSimulationM
 import { FILTERS, FontStyle } from '@/types/postcard';
 import { CreditCard, MapPin, Mail, Send, TestTube, Loader2, Stamp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { uploadPostcardImage } from '@/lib/uploadImage';
 
 const FONT_CLASS_MAP: Record<FontStyle, string> = {
   caveat: 'font-caveat',
