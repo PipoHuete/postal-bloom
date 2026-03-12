@@ -45,7 +45,9 @@ export default function Editor() {
   }
 
   const handleBack = () => {
-    if (activeTab === 'dorso') {
+    if (activeTab === 'preview') {
+      setActiveTab('dorso');
+    } else if (activeTab === 'dorso') {
       setActiveTab('anverso');
     } else {
       navigate('/gallery');
@@ -66,14 +68,23 @@ export default function Editor() {
   const handleNext = () => {
     if (activeTab === 'anverso') {
       setActiveTab('dorso');
-    } else {
+    } else if (activeTab === 'dorso') {
       const missing = getMissingFields();
       if (missing.length > 0) {
         toast.error(`Faltan campos: ${missing.join(', ')}`);
         return;
       }
+      setActiveTab('preview');
+    } else {
       navigate('/checkout');
     }
+  };
+
+  const isNextDisabled = () => {
+    if (activeTab === 'anverso') {
+      return !postcard.image;
+    }
+    return false;
   };
 
   const isNextDisabled = () => {
