@@ -2,8 +2,8 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface PostcardTabsProps {
-  activeTab: 'anverso' | 'dorso';
-  onTabChange: (tab: 'anverso' | 'dorso') => void;
+  activeTab: 'anverso' | 'dorso' | 'preview';
+  onTabChange: (tab: 'anverso' | 'dorso' | 'preview') => void;
 }
 
 const TABS = [
