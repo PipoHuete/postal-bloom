@@ -15,7 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 export default function Editor() {
   const navigate = useNavigate();
   const { postcard } = usePostcard();
-  const [activeTab, setActiveTab] = useState<'anverso' | 'dorso'>('anverso');
+  const [activeTab, setActiveTab] = useState<'anverso' | 'dorso' | 'preview'>('anverso');
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
