@@ -7,6 +7,8 @@ import { NavigationBar } from '@/components/layout/NavigationBar';
 import { PostcardTabs } from '@/components/postcard/PostcardTabs';
 import { PostcardFront } from '@/components/postcard/PostcardFront';
 import { PostcardBack } from '@/components/postcard/PostcardBack';
+import { PostcardPreview } from '@/components/postcard/PostcardPreview';
+import { PostcardBack } from '@/components/postcard/PostcardBack';
 import { usePostcard } from '@/contexts/PostcardContext';
 import { supabase } from '@/integrations/supabase/client';
 
