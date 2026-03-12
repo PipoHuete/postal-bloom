@@ -153,11 +153,23 @@ export default function Checkout() {
         return;
       }
 
+      // Upload image to get a public URL
+      let publicImageUrl = postcard.image?.url || '';
+      if (publicImageUrl) {
+        try {
+          publicImageUrl = await uploadPostcardImage(publicImageUrl);
+        } catch (uploadErr) {
+          console.error('Error uploading image:', uploadErr);
+          toast.error('Error al subir la imagen');
+          return;
+        }
+      }
+
       const { data, error } = await supabase.functions.invoke('send-test-postcard', {
         body: {
           recipientEmail: user.email,
           postcardData: {
-            imageUrl: postcard.image?.url || '',
+            imageUrl: publicImageUrl,
             imageFilter: filterOption?.cssFilter || 'none',
             message: postcard.message,
             fontStyle: postcard.fontStyle,
