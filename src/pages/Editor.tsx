@@ -86,14 +86,6 @@ export default function Editor() {
     return false;
   };
 
-  const isNextDisabled = () => {
-    if (activeTab === 'anverso') {
-      return !postcard.image;
-    }
-    // En dorso, siempre habilitado - la validación se hace al hacer clic
-    return false;
-  };
-
   return (
     <>
       <Helmet>
