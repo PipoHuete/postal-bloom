@@ -7,13 +7,14 @@ import { NavigationBar } from '@/components/layout/NavigationBar';
 import { PostcardTabs } from '@/components/postcard/PostcardTabs';
 import { PostcardFront } from '@/components/postcard/PostcardFront';
 import { PostcardBack } from '@/components/postcard/PostcardBack';
+import { PostcardPreview } from '@/components/postcard/PostcardPreview';
 import { usePostcard } from '@/contexts/PostcardContext';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function Editor() {
   const navigate = useNavigate();
   const { postcard } = usePostcard();
-  const [activeTab, setActiveTab] = useState<'anverso' | 'dorso'>('anverso');
+  const [activeTab, setActiveTab] = useState<'anverso' | 'dorso' | 'preview'>('anverso');
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
@@ -43,7 +44,9 @@ export default function Editor() {
   }
 
   const handleBack = () => {
-    if (activeTab === 'dorso') {
+    if (activeTab === 'preview') {
+      setActiveTab('dorso');
+    } else if (activeTab === 'dorso') {
       setActiveTab('anverso');
     } else {
       navigate('/gallery');
@@ -64,12 +67,14 @@ export default function Editor() {
   const handleNext = () => {
     if (activeTab === 'anverso') {
       setActiveTab('dorso');
-    } else {
+    } else if (activeTab === 'dorso') {
       const missing = getMissingFields();
       if (missing.length > 0) {
         toast.error(`Faltan campos: ${missing.join(', ')}`);
         return;
       }
+      setActiveTab('preview');
+    } else {
       navigate('/checkout');
     }
   };
@@ -78,7 +83,6 @@ export default function Editor() {
     if (activeTab === 'anverso') {
       return !postcard.image;
     }
-    // En dorso, siempre habilitado - la validación se hace al hacer clic
     return false;
   };
 
@@ -100,16 +104,16 @@ export default function Editor() {
           </nav>
 
           {/* Content */}
-          <section aria-label={activeTab === 'anverso' ? 'Anverso de la postal - Foto y filtros' : 'Dorso de la postal - Mensaje y dirección'}>
-            {activeTab === 'anverso' ? <PostcardFront /> : <PostcardBack />}
+          <section aria-label={activeTab === 'anverso' ? 'Anverso de la postal - Foto y filtros' : activeTab === 'dorso' ? 'Dorso de la postal - Mensaje y dirección' : 'Vista previa de la postal'}>
+            {activeTab === 'anverso' ? <PostcardFront /> : activeTab === 'dorso' ? <PostcardBack /> : <PostcardPreview />}
           </section>
         </main>
 
         <NavigationBar
           onBack={handleBack}
           onNext={handleNext}
-          backLabel={activeTab === 'dorso' ? 'Anverso' : 'Galería'}
-          nextLabel={activeTab === 'dorso' ? 'Pagar' : 'Dorso'}
+          backLabel={activeTab === 'preview' ? 'Dorso' : activeTab === 'dorso' ? 'Anverso' : 'Galería'}
+          nextLabel={activeTab === 'preview' ? 'Pagar' : activeTab === 'dorso' ? 'Continuar' : 'Dorso'}
           nextDisabled={isNextDisabled()}
         />
       </div>
