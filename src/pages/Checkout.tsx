@@ -111,7 +111,7 @@ export default function Checkout() {
             orderId: order.id,
             recipientEmail: user.email,
             postcardData: {
-              imageUrl: postcard.image?.url || '',
+              imageUrl: publicImageUrl,
               imageFilter: filterOption?.cssFilter || 'none',
               message: postcard.message,
               fontStyle: postcard.fontStyle,
