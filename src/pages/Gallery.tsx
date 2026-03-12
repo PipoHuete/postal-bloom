@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { NavigationBar } from '@/components/layout/NavigationBar';
 import { GalleryGrid } from '@/components/gallery/GalleryGrid';
+import { ImageCropper } from '@/components/gallery/ImageCropper';
 import { usePostcard } from '@/contexts/PostcardContext';
 import { Button } from '@/components/ui/button';
 import { Camera, ImagePlus, Images } from 'lucide-react';
 import { PostcardImage } from '@/types/postcard';
 import { supabase } from '@/integrations/supabase/client';
 
-// Demo images - in production these would come from the device gallery
 const DEMO_IMAGES: PostcardImage[] = [
   { id: '1', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800', thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300' },
   { id: '2', url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800', thumbnail: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300' },
@@ -28,6 +28,11 @@ export default function Gallery() {
   const { postcard, setImage } = usePostcard();
   const [selectedId, setSelectedId] = useState<string | null>(postcard.image?.id || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  // Cropper state
+  const [cropImageUrl, setCropImageUrl] = useState<string | null>(null);
+  const [pendingImage, setPendingImage] = useState<{ id: string; originalUrl: string } | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -37,9 +42,32 @@ export default function Gallery() {
     });
   }, [navigate]);
 
+  const openCropper = (id: string, url: string) => {
+    setPendingImage({ id, originalUrl: url });
+    setCropImageUrl(url);
+  };
+
   const handleSelect = (image: PostcardImage) => {
-    setSelectedId(image.id);
-    setImage({ ...image, filter: 'none' });
+    openCropper(image.id, image.url);
+  };
+
+  const handleCropComplete = (croppedBlobUrl: string) => {
+    if (!pendingImage) return;
+    const newImage: PostcardImage = {
+      id: pendingImage.id,
+      url: croppedBlobUrl,
+      thumbnail: croppedBlobUrl,
+      filter: 'none',
+    };
+    setImage(newImage);
+    setSelectedId(newImage.id);
+    setCropImageUrl(null);
+    setPendingImage(null);
+  };
+
+  const handleCropCancel = () => {
+    setCropImageUrl(null);
+    setPendingImage(null);
   };
 
   const handleNext = () => {
@@ -52,18 +80,12 @@ export default function Gallery() {
     const file = event.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      const newImage: PostcardImage = {
-        id: `upload-${Date.now()}`,
-        url,
-        thumbnail: url,
-        filter: 'none',
-      };
-      setImage(newImage);
-      setSelectedId(newImage.id);
+      const id = `upload-${Date.now()}`;
+      openCropper(id, url);
     }
+    // Reset input so the same file can be re-selected
+    event.target.value = '';
   };
-
-  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleCameraClick = () => {
     cameraInputRef.current?.click();
@@ -78,71 +100,76 @@ export default function Gallery() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div className="min-h-screen pb-24">
-      <Header title="Selecciona Foto" showClose />
-      
-      <main className="container px-4 py-6 max-w-lg mx-auto">
-        {/* Action Buttons */}
-        <section className="flex gap-3 mb-6" aria-label="Opciones para añadir foto">
-          <Button
-            variant="postcard-primary"
-            className="flex-1"
-            onClick={handleCameraClick}
-            aria-label="Tomar foto con la cámara para postal personalizada"
-          >
-            <Camera className="w-5 h-5 mr-2" aria-hidden="true" />
-            Cámara
-          </Button>
-          <Button
-            variant="postcard-primary"
-            className="flex-1"
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Subir foto desde galería para postal vintage"
-          >
-            <ImagePlus className="w-5 h-5 mr-2" aria-hidden="true" />
-            Subir
-          </Button>
-          {/* Camera input - opens camera directly on mobile */}
-          <input
-            ref={cameraInputRef}
-            type="file"
-            accept="image/*"
-            capture="user"
-            onChange={handleFileUpload}
-            className="hidden"
-            aria-hidden="true"
-          />
-          {/* File input - opens gallery */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="hidden"
-            aria-hidden="true"
-          />
-        </section>
+        <Header title="Selecciona Foto" showClose />
+        
+        <main className="container px-4 py-6 max-w-lg mx-auto">
+          <section className="flex gap-3 mb-6" aria-label="Opciones para añadir foto">
+            <Button
+              variant="postcard-primary"
+              className="flex-1"
+              onClick={handleCameraClick}
+              aria-label="Tomar foto con la cámara para postal personalizada"
+            >
+              <Camera className="w-5 h-5 mr-2" aria-hidden="true" />
+              Cámara
+            </Button>
+            <Button
+              variant="postcard-primary"
+              className="flex-1"
+              onClick={() => fileInputRef.current?.click()}
+              aria-label="Subir foto desde galería para postal vintage"
+            >
+              <ImagePlus className="w-5 h-5 mr-2" aria-hidden="true" />
+              Subir
+            </Button>
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="user"
+              onChange={handleFileUpload}
+              className="hidden"
+              aria-hidden="true"
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="hidden"
+              aria-hidden="true"
+            />
+          </section>
 
-        {/* Section Title */}
-        <div className="flex items-center gap-2 mb-4">
-          <Images className="w-5 h-5 text-primary" aria-hidden="true" />
-          <h1 className="font-display text-lg font-semibold">Galería de Fotos para tu Postal</h1>
-        </div>
+          <div className="flex items-center gap-2 mb-4">
+            <Images className="w-5 h-5 text-primary" aria-hidden="true" />
+            <h1 className="font-display text-lg font-semibold">Galería de Fotos para tu Postal</h1>
+          </div>
 
-        {/* Gallery Grid */}
-        <GalleryGrid
-          images={DEMO_IMAGES}
-          selectedId={selectedId}
-          onSelect={handleSelect}
+          <GalleryGrid
+            images={DEMO_IMAGES}
+            selectedId={selectedId}
+            onSelect={handleSelect}
+          />
+        </main>
+
+        <NavigationBar
+          showBack={false}
+          nextLabel="Continuar"
+          onNext={handleNext}
+          nextDisabled={!selectedId}
         />
-      </main>
+      </div>
 
-      <NavigationBar
-        showBack={false}
-        nextLabel="Continuar"
-        onNext={handleNext}
-        nextDisabled={!selectedId}
-      />
-    </div>
+      {/* Image Cropper */}
+      {cropImageUrl && (
+        <ImageCropper
+          imageUrl={cropImageUrl}
+          isOpen={true}
+          onClose={handleCropCancel}
+          onCropComplete={handleCropComplete}
+        />
+      )}
     </>
   );
 }
