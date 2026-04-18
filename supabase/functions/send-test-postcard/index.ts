@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { jsPDF } from "https://esm.sh/jspdf@2.5.1";
+import { generatePostcardPDF } from "../_shared/pdf.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
