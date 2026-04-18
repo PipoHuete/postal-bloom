@@ -103,6 +103,7 @@ export function ImageCropper({ imageUrl, isOpen, onClose, onCropComplete }: Imag
             src={imageUrl}
             alt="Imagen a recortar"
             onLoad={onImageLoad}
+            crossOrigin="anonymous"
             className="max-h-[60vh] max-w-full"
           />
         </ReactCrop>
